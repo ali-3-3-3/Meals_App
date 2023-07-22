@@ -1,98 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meals_app/providers/filters_provider.dart';
 
-enum Filter {
-  glutenFree,
-  lactoseFree,
-  vegetarian,
-  vegan,
-}
-
-class FiltersScreen extends StatefulWidget {
-  const FiltersScreen({super.key, required this.currentFilters});
-
-  final Map<Filter, bool> currentFilters;
+class FiltersScreen extends ConsumerWidget {
+  const FiltersScreen({super.key});
 
   @override
-  State<FiltersScreen> createState() {
-    return _FiltersScreenState();
-  }
-}
-
-class _FiltersScreenState extends State<FiltersScreen> {
-  var _glutenFreeFilterSet = false;
-  var _lactoseFreeFilterSet = false;
-  var _vegetarianFilterSet = false;
-  var _veganFilterSet = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _glutenFreeFilterSet = widget.currentFilters[Filter.glutenFree]!;
-    _lactoseFreeFilterSet = widget.currentFilters[Filter.lactoseFree]!;
-    _vegetarianFilterSet = widget.currentFilters[Filter.vegetarian]!;
-    _veganFilterSet = widget.currentFilters[Filter.vegan]!;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeFilters = ref.watch(filtersProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Filters'),
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop({
-            Filter.glutenFree: _glutenFreeFilterSet,
-            Filter.lactoseFree: _lactoseFreeFilterSet,
-            Filter.vegetarian: _vegetarianFilterSet,
-            Filter.vegan: _veganFilterSet,
-          });
-          return false;
-        },
-        child: Column(
-          children: [
-            FilterSwitchListTile(
-              filterSet: _glutenFreeFilterSet,
-              settingState: (isChecked) {
-                setState(() {
-                  _glutenFreeFilterSet = isChecked;
-                });
-              },
-              option: 'Gluten-free',
-              detail: 'Only include gluten-free meals.',
-            ),
-            FilterSwitchListTile(
-              filterSet: _lactoseFreeFilterSet,
-              settingState: (isChecked) {
-                setState(() {
-                  _lactoseFreeFilterSet = isChecked;
-                });
-              },
-              option: 'Lactose-free',
-              detail: 'Only include lactose-free meals.',
-            ),
-            FilterSwitchListTile(
-              filterSet: _vegetarianFilterSet,
-              settingState: (isChecked) {
-                setState(() {
-                  _vegetarianFilterSet = isChecked;
-                });
-              },
-              option: 'Vegetarian',
-              detail: 'Only include vegetarian meals.',
-            ),
-            FilterSwitchListTile(
-              filterSet: _veganFilterSet,
-              settingState: (isChecked) {
-                setState(() {
-                  _veganFilterSet = isChecked;
-                });
-              },
-              option: 'Vegan',
-              detail: 'Only include vegan meals.',
-            ),
-          ],
-        ),
+      body: Column(
+        children: [
+          FilterSwitchListTile(
+            filterSet: activeFilters[Filter.glutenFree]!,
+            settingState: (isChecked) {
+              ref
+                  .read(filtersProvider.notifier)
+                  .setFilter(Filter.glutenFree, isChecked);
+            },
+            option: 'Gluten-free',
+            detail: 'Only include gluten-free meals.',
+          ),
+          FilterSwitchListTile(
+            filterSet: activeFilters[Filter.lactoseFree]!,
+            settingState: (isChecked) {
+              ref
+                  .read(filtersProvider.notifier)
+                  .setFilter(Filter.lactoseFree, isChecked);
+            },
+            option: 'Lactose-free',
+            detail: 'Only include lactose-free meals.',
+          ),
+          FilterSwitchListTile(
+            filterSet: activeFilters[Filter.vegetarian]!,
+            settingState: (isChecked) {
+              ref
+                  .read(filtersProvider.notifier)
+                  .setFilter(Filter.vegetarian, isChecked);
+            },
+            option: 'Vegetarian',
+            detail: 'Only include vegetarian meals.',
+          ),
+          FilterSwitchListTile(
+            filterSet: activeFilters[Filter.vegan]!,
+            settingState: (isChecked) {
+              ref
+                  .read(filtersProvider.notifier)
+                  .setFilter(Filter.vegan, isChecked);
+            },
+            option: 'Vegan',
+            detail: 'Only include vegan meals.',
+          ),
+        ],
       ),
     );
   }
