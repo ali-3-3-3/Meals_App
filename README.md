@@ -1,3 +1,3 @@
-# meals_app
+# Meals App
 
-A new Flutter project.
+From: Flutter & Dart - The Complete Guide [2023 Edition]
